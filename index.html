@@ -28,15 +28,23 @@
     .category-header {
       font-weight: bold; background: #ddd; padding: 8px; border-radius: 4px; margin-top: 15px;
     }
-    .item-header { display: flex; justify-content: space-between; align-items: center; }
-    .item-header h2 { margin: 0; font-size: 1.1em; }
+    .item-header { display: flex; align-items: center; }
+    .item-header h2 {
+      margin: 0; font-size: 1.1em; flex: 1;
+      cursor: pointer;
+    }
+    .item-header input.item-checkbox {
+      margin-right: 10px;
+      transform: scale(1.3);
+      cursor: pointer;
+    }
     .item-header button {
       margin-left: 5px; padding: 5px 10px; border: none; border-radius: 4px;
       color: #fff; cursor: pointer; font-size: 0.9em;
     }
-    .edit { background: #3498db; }
-    .hide { background: #f39c12; }
-    .show { background: #27ae60; }
+    .edit   { background: #3498db; }
+    .hide   { background: #f39c12; }
+    .show   { background: #27ae60; }
     .delete { background: #e74c3c; }
     .item-details { margin-top: 5px; font-size: 0.9em; color: #555; }
   </style>
@@ -85,59 +93,62 @@
   <script>
     const LS_KEY = 'shoppingLists';
     let editingIndex = null;
-    const categoryOrder = ['Produce','Proteins','Dairy','Pantry & Carbs','Frozen Foods','Beverages','Snacks & Treats','Condiments & Oils','Bakery','Household & Personal Care','Dog (Benji)'];
-const DEFAULT_ITEMS = [
-  { name:'moras',                quantity:1, category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'fresas',               quantity:1, category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'guineos',              quantity:10,category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'uvas',                 quantity:1, category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'limon',                quantity:1, category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'yogurt griego',        quantity:3, category:'Dairy',          aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'Pure de yuca',         quantity:3, category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'sweet potato fries',   quantity:1, category:'Frozen Foods',   aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'brocoli',              quantity:1, category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'lechuga',              quantity:1, category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'arroz',                quantity:1, category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'avena',                quantity:1, category:'Pantry & Carbs',      aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'granola',              quantity:2, category:'Pantry & Carbs',      aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'maiz',                 quantity:2, category:'Produce',            aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'mantequilla',          quantity:2, category:'Dairy',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'habichuela',           quantity:1, category:'Proteins',           aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'helado',               quantity:1, category:'Frozen Foods',       aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'zumo limon',           quantity:1, category:'Beverages',          aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'fresas congeladas',    quantity:1, category:'Frozen Foods',       aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'jugo',                 quantity:1, category:'Beverages',          aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'leche',                quantity:3, category:'Dairy',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'popcorn',              quantity:1, category:'Snacks & Treats',    aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'spray aceite',         quantity:1, category:'Condiments & Oils',  aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'queso cheddar',        quantity:1, category:'Dairy',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'mozzarella',           quantity:1, category:'Dairy',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'huevos',               quantity:1, category:'Proteins',           aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'toallitas humedas',    quantity:2, category:'Household & Personal Care', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'prossicuto',           quantity:1, category:'Proteins',           aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'longas de pechuga de pollo', quantity:1, category:'Proteins',     aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'pechugas de pollo',    quantity:2, category:'Proteins',           aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'carne de res',         quantity:5, category:'Proteins',           aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'pescado',              quantity:1, category:'Proteins',           aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'carne molida',         quantity:2, category:'Proteins',           aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'tocineta',             quantity:1, category:'Proteins',           aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'cocacola sin azucar',  quantity:1, category:'Beverages',          aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'crema de leche',       quantity:1, category:'Dairy',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'cereal',               quantity:2, category:'Pantry & Carbs',      aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'pasta y salsa',        quantity:1, category:'Pantry & Carbs',      aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'pancake',              quantity:1, category:'Bakery',             aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'tuna',                 quantity:3, category:'Proteins',           aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'aguacate',             quantity:2, category:'Produce',            aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'honey',                quantity:1, category:'Condiments & Oils',  aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'coffee',               quantity:1, category:'Beverages',          aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'crema batida',         quantity:1, category:'Dairy',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'chocolate chips',      quantity:1, category:'Snacks & Treats',    aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'beef broth',           quantity:1, category:'Pantry & Carbs',      aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'friendly benji treats',quantity:1, category:'Dog (Benji)',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'comida humeda',        quantity:1, category:'Dog (Benji)',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-  { name:'comida solida',        quantity:1, category:'Dog (Benji)',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false }
-];
-
+    const categoryOrder = [
+      'Produce','Proteins','Dairy','Pantry & Carbs','Frozen Foods',
+      'Beverages','Snacks & Treats','Condiments & Oils','Bakery',
+      'Household & Personal Care','Dog (Benji)'
+    ];
+    const DEFAULT_ITEMS = [
+      { name:'moras',                quantity:1,  category:'Produce',               aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'fresas',               quantity:1,  category:'Produce',               aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'guineos',              quantity:10, category:'Produce',               aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'uvas',                 quantity:1,  category:'Produce',               aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'limon',                quantity:1,  category:'Produce',               aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'yogurt griego',        quantity:3,  category:'Dairy',                 aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'Pure de yuca',         quantity:3,  category:'Pantry & Carbs',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'sweet potato fries',   quantity:1,  category:'Frozen Foods',          aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'brocoli',              quantity:1,  category:'Produce',               aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'lechuga',              quantity:1,  category:'Produce',               aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'arroz',                quantity:1,  category:'Pantry & Carbs',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'avena',                quantity:1,  category:'Pantry & Carbs',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'granola',              quantity:2,  category:'Pantry & Carbs',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'maiz',                 quantity:2,  category:'Produce',               aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'mantequilla',          quantity:2,  category:'Dairy',                 aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'habichuela',           quantity:1,  category:'Proteins',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'helado',               quantity:1,  category:'Frozen Foods',          aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'zumo limon',           quantity:1,  category:'Beverages',             aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'fresas congeladas',    quantity:1,  category:'Frozen Foods',          aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'jugo',                 quantity:1,  category:'Beverages',             aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'leche',                quantity:3,  category:'Dairy',                 aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'popcorn',              quantity:1,  category:'Snacks & Treats',       aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'spray aceite',         quantity:1,  category:'Condiments & Oils',     aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'queso cheddar',        quantity:1,  category:'Dairy',                 aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'mozzarella',           quantity:1,  category:'Dairy',                 aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'huevos',               quantity:1,  category:'Proteins',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'toallitas humedas',    quantity:2,  category:'Household & Personal Care', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'prossicuto',           quantity:1,  category:'Proteins',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'longas de pechuga de pollo', quantity:1, category:'Proteins',          aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'pechugas de pollo',    quantity:2,  category:'Proteins',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'carne de res',         quantity:5,  category:'Proteins',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'pescado',              quantity:1,  category:'Proteins',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'carne molida',         quantity:2,  category:'Proteins',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'tocineta',             quantity:1,  category:'Proteins',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'cocacola sin azucar',  quantity:1,  category:'Beverages',             aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'crema de leche',       quantity:1,  category:'Dairy',                 aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'cereal',               quantity:2,  category:'Pantry & Carbs',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'pasta y salsa',        quantity:1,  category:'Pantry & Carbs',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'pancake',              quantity:1,  category:'Bakery',                aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'tuna',                 quantity:3,  category:'Proteins',              aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'aguacate',             quantity:2,  category:'Produce',               aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'honey',                quantity:1,  category:'Condiments & Oils',     aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'coffee',               quantity:1,  category:'Beverages',             aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'crema batida',         quantity:1,  category:'Dairy',                 aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'chocolate chips',      quantity:1,  category:'Snacks & Treats',       aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'beef broth',           quantity:1,  category:'Pantry & Carbs',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'friendly benji treats',quantity:1,  category:'Dog (Benji)',           aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'comida humeda',        quantity:1,  category:'Dog (Benji)',           aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'comida solida',        quantity:1,  category:'Dog (Benji)',           aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false }
+    ];
 
     function getAll() {
       return JSON.parse(localStorage.getItem(LS_KEY)) || { current:'', lists:{} };
@@ -235,10 +246,10 @@ const DEFAULT_ITEMS = [
         price: parseFloat(document.getElementById('price').value).toFixed(2),
         frequency: document.getElementById('frequency').value.trim(),
         notes: document.getElementById('notes').value.trim(),
-        checked: editingIndex!==null ? items[editingIndex].checked : false,
-        hidden: editingIndex!==null ? items[editingIndex].hidden : false
+        checked: editingIndex !== null ? items[editingIndex].checked : false,
+        hidden:  editingIndex !== null ? items[editingIndex].hidden  : false
       };
-      if (editingIndex===null) items.push(item);
+      if (editingIndex === null) items.push(item);
       else items[editingIndex] = item;
       saveItems(items);
       cancelEdit();
@@ -250,34 +261,49 @@ const DEFAULT_ITEMS = [
       const showHidden = document.getElementById('toggleHidden').checked;
       const ul = document.getElementById('itemList');
       ul.innerHTML = '';
+
       categoryOrder.forEach(cat => {
-        const group = items.filter(i => i.category === cat && (!i.hidden || showHidden));
+        const group = items
+          .map((it, idx) => ({ it, idx }))
+          .filter(({ it }) => it.category === cat && (!it.hidden || showHidden));
+
         if (!group.length) return;
+
         const hdr = document.createElement('li');
         hdr.textContent = cat;
         hdr.className = 'category-header';
         ul.append(hdr);
-        group.forEach((item, idx) => {
+
+        group.forEach(({ it: item, idx }) => {
           const li = document.createElement('li');
           if (item.checked) li.classList.add('checked');
           if (item.hidden && showHidden) li.classList.add('showing-hidden');
-          li.addEventListener('click', () => toggleChecked(idx));
 
           const dh = document.createElement('div');
           dh.className = 'item-header';
           dh.addEventListener('click', e => e.stopPropagation());
 
+          const chk = document.createElement('input');
+          chk.type = 'checkbox';
+          chk.className = 'item-checkbox';
+          chk.checked = item.checked;
+          chk.addEventListener('click', e => {
+            e.stopPropagation();
+            toggleChecked(idx);
+          });
+
           const t = document.createElement('h2');
           t.textContent = `${item.name} (x${item.quantity})`;
+          t.addEventListener('click', () => toggleChecked(idx));
 
           const btns = document.createElement('div');
           btns.append(
-            makeBtn('Editar','edit', () => startEdit(idx)),
+            makeBtn('Editar', 'edit', () => startEdit(idx)),
             makeBtn(item.hidden ? 'Mostrar' : 'Ocultar', item.hidden ? 'show' : 'hide', () => toggleHidden(idx)),
-            makeBtn('Eliminar','delete', () => deleteItem(idx))
+            makeBtn('Eliminar', 'delete', () => deleteItem(idx))
           );
 
-          dh.append(t, btns);
+          dh.append(chk, t, btns);
 
           const det = document.createElement('div');
           det.className = 'item-details';
@@ -296,7 +322,8 @@ const DEFAULT_ITEMS = [
 
     function makeBtn(text, cls, fn) {
       const b = document.createElement('button');
-      b.textContent = text; b.className = cls;
+      b.textContent = text;
+      b.className = cls;
       b.addEventListener('click', e => { e.stopPropagation(); fn(); });
       return b;
     }
@@ -304,15 +331,17 @@ const DEFAULT_ITEMS = [
     function toggleChecked(i) {
       const items = getItems();
       items[i].checked = !items[i].checked;
-      saveItems(items); renderList();
+      saveItems(items);
+      renderList();
     }
     function toggleHidden(i) {
       const items = getItems();
       items[i].hidden = !items[i].hidden;
-      saveItems(items); renderList();
+      saveItems(items);
+      renderList();
     }
     function startEdit(i) {
-      const items = getItems(), it = items[i];
+      const it = getItems()[i];
       editingIndex = i;
       document.getElementById('name').value = it.name;
       document.getElementById('quantity').value = it.quantity;
@@ -360,5 +389,3 @@ const DEFAULT_ITEMS = [
   </script>
 </body>
 </html>
-
-
