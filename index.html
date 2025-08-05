@@ -26,8 +26,7 @@
     #addItemSection summary {
       background:#3498db; color:#fff; padding:8px 12px;
       border-radius:4px; cursor:pointer; user-select:none;
-      margin-bottom:10px;
-      font-size:1.1em;
+      margin-bottom:10px; font-size:1.1em;
     }
     #addItemSection summary:hover { background:#2980b9; }
 
@@ -40,12 +39,10 @@
       border:1px solid #ccc; border-radius:4px;
     }
     form .half { flex:1 1 calc(50% - 10px); }
-    form button { cursor:pointer; }
+    form button, form label { cursor:pointer; }
 
     /* Category accordion */
-    #itemList details.category-group {
-      margin-bottom:15px;
-    }
+    #itemList details.category-group { margin-bottom:15px; }
     #itemList summary.category-header {
       font-weight:bold; background:#ddd; padding:8px;
       border-radius:4px; cursor:pointer; user-select:none;
@@ -53,22 +50,17 @@
     }
 
     /* Items inside each category */
-    #itemList ul {
-      list-style:none; margin:0; padding:0;
-    }
+    #itemList ul { list-style:none; margin:0; padding:0; }
     #itemList ul li {
       background:#fff; margin:8px 0; padding:10px;
       border-radius:4px; border:1px solid #ddd;
-      display:flex; flex-direction:column;
-      font-size:1em;
+      display:flex; flex-direction:column; font-size:1em;
     }
     #itemList ul li.checked {
       opacity:0.6; text-decoration:line-through; background:#e0e0e0;
     }
     #itemList ul li.showing-hidden { opacity:0.4; }
-    .item-header {
-      display:flex; align-items:center;
-    }
+    .item-header { display:flex; align-items:center; }
     .item-header input.item-checkbox {
       margin-right:10px; transform:scale(1.3); cursor:pointer;
     }
@@ -77,33 +69,23 @@
     }
     .item-header button {
       margin-left:5px; padding:5px 10px; border:none;
-      border-radius:4px; color:#fff; cursor:pointer;
-      font-size:0.9em;
+      border-radius:4px; color:#fff; cursor:pointer; font-size:0.9em;
     }
     .edit   { background:#3498db; }
     .hide   { background:#f39c12; }
     .show   { background:#27ae60; }
     .delete { background:#e74c3c; }
-
     .item-details { margin-top:8px; font-size:0.9em; color:#555; }
 
     /* Filter list at bottom */
     #filterList {
-      margin-top:30px;
-      background:#fafafa; padding:15px; border-radius:4px; border:1px solid #ccc;
+      margin-top:30px; background:#fafafa; padding:15px;
+      border-radius:4px; border:1px solid #ccc;
     }
-    #filterList h2 {
-      margin-top:0; font-size:1.2em; text-align:center;
-    }
-    #filterList h3 {
-      margin:15px 0 5px; font-size:1.1em;
-    }
-    #filterList ul {
-      list-style:none; padding-left:0;
-    }
-    #filterList ul li {
-      padding:4px 0; font-size:1em;
-    }
+    #filterList h2 { margin-top:0; font-size:1.2em; text-align:center; }
+    #filterList h3 { margin:15px 0 5px; font-size:1.1em; }
+    #filterList ul { list-style:none; padding-left:0; }
+    #filterList ul li { padding:4px 0; font-size:1em; }
   </style>
 </head>
 <body>
@@ -141,6 +123,12 @@
         <input type="number" id="price" placeholder="Precio" class="half" step="0.01" required>
         <input type="text" id="frequency" placeholder="Frecuencia" class="half" required>
         <textarea id="notes" placeholder="Notas"></textarea>
+
+        <!-- New: marcar como default -->
+        <label style="flex:1 1 100%; margin-top:-5px;">
+          <input type="checkbox" id="makeDefault"> Agregar como item <strong>predeterminado</strong>
+        </label>
+
         <button type="submit" id="submitBtn">Agregar ítem</button>
         <button type="button" id="cancelEdit" style="display:none;">Cancelar</button>
       </form>
@@ -216,8 +204,17 @@
     ];
 
     function getAll() {
-      return JSON.parse(localStorage.getItem(LS_KEY)) || { current:'', lists:{} };
+      const raw = localStorage.getItem(LS_KEY);
+      const data = raw
+        ? JSON.parse(raw)
+        : { current:'', lists:{}, defaultItems:JSON.parse(JSON.stringify(DEFAULT_ITEMS)) };
+      if (!data.defaultItems) {
+        data.defaultItems = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+        localStorage.setItem(LS_KEY, JSON.stringify(data));
+      }
+      return data;
     }
+
     function saveAll(data) {
       localStorage.setItem(LS_KEY, JSON.stringify(data));
     }
@@ -226,7 +223,7 @@
       const data = getAll();
       if (!data.current) {
         data.current = 'Semana Actual';
-        data.lists['Semana Actual'] = [...DEFAULT_ITEMS];
+        data.lists['Semana Actual'] = JSON.parse(JSON.stringify(data.defaultItems));
         saveAll(data);
       }
       bindControls();
@@ -262,7 +259,7 @@
       if (!name) return alert('Escribe un nombre para la nueva lista.');
       const data = getAll();
       if (data.lists[name]) return alert('Ya existe una lista con ese nombre.');
-      data.lists[name] = [...DEFAULT_ITEMS];
+      data.lists[name] = JSON.parse(JSON.stringify(data.defaultItems));
       data.current = name;
       saveAll(data);
       populateWeekSelect();
@@ -293,6 +290,7 @@
     function getItems() {
       return getAll().lists[getAll().current] || [];
     }
+
     function saveItems(items) {
       const data = getAll();
       data.lists[data.current] = items;
@@ -301,7 +299,8 @@
 
     function onFormSubmit(e) {
       e.preventDefault();
-      const items = getItems();
+      const data = getAll();
+      const items = data.lists[data.current] || [];
       const item = {
         name:       document.getElementById('name').value.trim(),
         quantity:   +document.getElementById('quantity').value,
@@ -313,11 +312,21 @@
         checked:    editingIndex!==null ? items[editingIndex].checked : false,
         hidden:     editingIndex!==null ? items[editingIndex].hidden  : false
       };
-      if (editingIndex === null) items.push(item);
-      else                        items[editingIndex] = item;
-      saveItems(items);
-      document.getElementById('addItemSection').open = false;
+
+      if (editingIndex===null) {
+        items.push(item);
+        if (document.getElementById('makeDefault').checked) {
+          data.defaultItems.push(item);
+        }
+      } else {
+        items[editingIndex] = item;
+      }
+
+      data.lists[data.current] = items;
+      saveAll(data);
+
       cancelEdit();
+      document.getElementById('addItemSection').open = false;
       renderList();
     }
 
@@ -330,14 +339,12 @@
       categoryOrder.forEach(cat => {
         const group = items
           .map((it, idx) => ({ it, idx }))
-          .filter(({ it }) => it.category === cat && (!it.hidden || showHidden));
-
+          .filter(({ it }) => it.category===cat && (!it.hidden||showHidden));
         if (!group.length) return;
 
         const details = document.createElement('details');
         details.className = 'category-group';
         details.open = true;
-
         const sum = document.createElement('summary');
         sum.className = 'category-header';
         sum.textContent = cat;
@@ -347,31 +354,24 @@
         group.forEach(({ it:item, idx }) => {
           const li = document.createElement('li');
           if (item.checked) li.classList.add('checked');
-          if (item.hidden  && showHidden) li.classList.add('showing-hidden');
+          if (item.hidden && showHidden) li.classList.add('showing-hidden');
 
           const hdr = document.createElement('div');
           hdr.className = 'item-header';
 
           const chk = document.createElement('input');
-          chk.type    = 'checkbox';
-          chk.className = 'item-checkbox';
-          chk.checked = item.checked;
-          chk.addEventListener('click', e => {
-            e.stopPropagation();
-            toggleChecked(idx);
-          });
+          chk.type='checkbox'; chk.className='item-checkbox'; chk.checked=item.checked;
+          chk.addEventListener('click', e=>{ e.stopPropagation(); toggleChecked(idx); });
 
           const title = document.createElement('h2');
           title.textContent = `${item.name} (x${item.quantity})`;
-          title.addEventListener('click', ()=> toggleChecked(idx));
+          title.addEventListener('click', ()=>toggleChecked(idx));
 
           const btns = document.createElement('div');
           btns.append(
-            makeBtn('Editar','edit', ()=> startEdit(idx)),
-            makeBtn(item.hidden?'Mostrar':'Ocultar',
-                    item.hidden?'show':'hide',
-                    ()=> toggleHidden(idx)),
-            makeBtn('Eliminar','delete', ()=> deleteItem(idx))
+            makeBtn('Editar','edit', ()=>startEdit(idx)),
+            makeBtn(item.hidden?'Mostrar':'Ocultar', item.hidden?'show':'hide', ()=>toggleHidden(idx)),
+            makeBtn('Eliminar','delete', ()=>deleteItem(idx))
           );
 
           hdr.append(chk, title, btns);
@@ -403,48 +403,41 @@
 
       const byAisle = {};
       withA.forEach(it=>{
-        const key = it.aisle;
-        (byAisle[key] = byAisle[key]||[]).push(it);
+        (byAisle[it.aisle] = byAisle[it.aisle]||[]).push(it);
       });
 
       const byCat = {};
       withoutA.forEach(it=>{
-        const key = it.category||'Sin categoría';
-        (byCat[key] = byCat[key]||[]).push(it);
+        (byCat[it.category||'Sin categoría'] = byCat[it.category]||[]).push(it);
       });
 
       const container = document.getElementById('filterList');
       container.innerHTML = '<h2>Filtro: Pasillo y Categoría</h2>';
 
-      // Items con pasillo, ordenados
       Object.keys(byAisle)
         .sort((a,b)=>{
           const na=parseFloat(a), nb=parseFloat(b);
-          if(!isNaN(na)&&!isNaN(nb)) return na-nb;
-          return a.localeCompare(b);
+          return (!isNaN(na)&&!isNaN(nb))? na-nb : a.localeCompare(b);
         })
         .forEach(aisle=>{
-          const h3 = document.createElement('h3');
-          h3.textContent = `Pasillo ${aisle}`;
+          const h3 = document.createElement('h3'); h3.textContent = `Pasillo ${aisle}`;
           container.append(h3);
           const ul = document.createElement('ul');
           byAisle[aisle].forEach(it=>{
-            const li = document.createElement('li');
+            const li=document.createElement('li');
             li.textContent = `${it.name} (x${it.quantity})`;
             ul.append(li);
           });
           container.append(ul);
         });
 
-      // Luego los sin pasillo, por categoría
       categoryOrder.forEach(cat => {
         if(!byCat[cat]) return;
-        const h3 = document.createElement('h3');
-        h3.textContent = cat;
+        const h3 = document.createElement('h3'); h3.textContent = cat;
         container.append(h3);
         const ul = document.createElement('ul');
         byCat[cat].forEach(it=>{
-          const li = document.createElement('li');
+          const li=document.createElement('li');
           li.textContent = `${it.name} (x${it.quantity})`;
           ul.append(li);
         });
@@ -453,24 +446,19 @@
     }
 
     function makeBtn(text,cls,fn){
-      const b = document.createElement('button');
-      b.textContent = text;
-      b.className = cls;
+      const b=document.createElement('button');
+      b.textContent=text; b.className=cls;
       b.addEventListener('click', e=>{ e.stopPropagation(); fn(); });
       return b;
     }
 
     function toggleChecked(i){
-      const items = getItems();
-      items[i].checked = !items[i].checked;
-      saveItems(items);
-      renderList();
+      const items=getItems(); items[i].checked=!items[i].checked;
+      saveItems(items); renderList();
     }
     function toggleHidden(i){
-      const items = getItems();
-      items[i].hidden = !items[i].hidden;
-      saveItems(items);
-      renderList();
+      const items=getItems(); items[i].hidden=!items[i].hidden;
+      saveItems(items); renderList();
     }
     function startEdit(i){
       const it = getItems()[i];
@@ -482,6 +470,7 @@
       document.getElementById('price').value     = it.price;
       document.getElementById('frequency').value = it.frequency;
       document.getElementById('notes').value     = it.notes;
+      document.getElementById('makeDefault').checked = false;
       document.getElementById('submitBtn').textContent = 'Guardar cambios';
       document.getElementById('cancelEdit').style.display = 'inline-block';
       document.getElementById('addItemSection').open = true;
@@ -493,25 +482,25 @@
       document.getElementById('cancelEdit').style.display = 'none';
     }
     function deleteItem(i){
-      const items = getItems();
+      const items=getItems();
       items.splice(i,1);
       saveItems(items);
       renderList();
     }
     function exportCsv(){
-      const items = getItems();
-      const hdr = ['Nombre','Cantidad','Categoría','Pasillo','Precio','Frecuencia','Notas','Marcado','Oculto'];
-      let csv = hdr.join(',')+'\n';
+      const items=getItems();
+      const hdr=['Nombre','Cantidad','Categoría','Pasillo','Precio','Frecuencia','Notas','Marcado','Oculto'];
+      let csv=hdr.join(',')+'\n';
       items.forEach(i=>{
-        csv += [
+        csv+=[
           i.name,i.quantity,i.category,i.aisle,
           i.price,i.frequency,i.notes,i.checked,i.hidden
         ].map(f=>`"${f}"`).join(',')+'\n';
       });
-      const blob = new Blob([csv],{type:'text/csv'});
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href = url; a.download = `lista_${getAll().current}.csv`;
+      const blob=new Blob([csv],{type:'text/csv'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url; a.download=`lista_${getAll().current}.csv`;
       a.click(); URL.revokeObjectURL(url);
     }
 
