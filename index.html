@@ -9,7 +9,7 @@
     .container { max-width:600px; margin:0 auto; padding:20px; }
     h1 { text-align:center; }
 
-    /* Controls */
+    /* Semana / lista controls: fuente grande */
     .list-selector select,
     .list-selector input,
     .list-selector button { font-size:1.2em; }
@@ -19,26 +19,25 @@
     }
     .controls label { cursor:pointer; }
 
-    /* Add form */
+    /* Formulario */
     #addItemSection summary {
       background:#3498db; color:#fff; padding:8px 12px;
       border-radius:4px; cursor:pointer; user-select:none;
       margin-bottom:10px; font-size:1.1em;
     }
     #addItemSection summary:hover { background:#2980b9; }
-    form, .inline-form {
+    form {
       display:flex; flex-wrap:wrap; gap:10px;
       background:#fff; padding:15px; border-radius:4px; border:1px solid #ddd;
     }
-    form input, form select, form textarea, form button,
-    .inline-form input, .inline-form select, .inline-form textarea, .inline-form button {
+    form input, form select, form textarea, form button {
       flex:1 1 100%; padding:10px; font-size:1em;
       border:1px solid #ccc; border-radius:4px;
     }
-    form .half, .inline-form .half { flex:1 1 calc(50% - 10px); }
-    form button, form label, .inline-form button { cursor:pointer; }
+    form .half { flex:1 1 calc(50% - 10px); }
+    form label, form button { cursor:pointer; }
 
-    /* Main list */
+    /* Lista principal */
     #itemList details.category-group { margin-bottom:15px; }
     #itemList summary.category-header {
       font-weight:bold; background:#ddd; padding:8px;
@@ -72,7 +71,7 @@
     .delete { background:#e74c3c; }
     .item-details { font-size:0.9em; color:#555; }
 
-    /* Filter list */
+    /* Filtro pasillo */
     #filterList {
       margin-top:30px; background:#fafafa; padding:15px;
       border-radius:4px; border:1px solid #ccc;
@@ -87,7 +86,7 @@
   <div class="container">
     <h1>Listas de Compras Semanales</h1>
 
-    <!-- Semana selector -->
+    <!-- Semana -->
     <div class="list-selector">
       <select id="weekSelect"></select>
       <input type="text" id="newWeekName" placeholder="Nombre nueva lista">
@@ -95,13 +94,13 @@
       <button id="deleteWeekBtn">Eliminar lista</button>
     </div>
 
-    <!-- Mostrar ocultos & Export CSV -->
+    <!-- Controls -->
     <div class="controls">
       <label><input type="checkbox" id="toggleHidden"> Mostrar ocultos</label>
       <button id="exportCsvBtn">Exportar CSV</button>
     </div>
 
-    <!-- Collapsible add/edit form -->
+    <!-- Añadir ítem -->
     <details id="addItemSection" open>
       <summary>Agregar ítem</summary>
       <form id="itemForm">
@@ -109,37 +108,30 @@
         <input type="number" id="quantity" placeholder="Cantidad" class="half" min="1" required>
         <select id="category" class="half" required>
           <option value="">Categoría</option>
-          <option>Produce</option>
-          <option>Proteins</option>
-          <option>Dairy</option>
-          <option>Pantry & Carbs</option>
-          <option>Frozen Foods</option>
-          <option>Beverages</option>
-          <option>Snacks & Treats</option>
-          <option>Condiments & Oils</option>
-          <option>Bakery</option>
-          <option>Household & Personal Care</option>
-          <option>Dog (Benji)</option>
+          <option>Produce</option><option>Proteins</option><option>Dairy</option>
+          <option>Pantry & Carbs</option><option>Frozen Foods</option><option>Beverages</option>
+          <option>Snacks & Treats</option><option>Condiments & Oils</option><option>Bakery</option>
+          <option>Household & Personal Care</option><option>Dog (Benji)</option>
         </select>
         <input type="text" id="aisle" placeholder="Pasillo" class="half">
         <input type="number" id="price" placeholder="Precio" class="half" step="0.01" required>
         <input type="text" id="frequency" placeholder="Frecuencia" class="half" required>
         <textarea id="notes" placeholder="Notas"></textarea>
 
-        <!-- New: marcar como default -->
+        <!-- Predeterminado -->
         <label style="flex:1 1 100%; margin-top:-5px;">
           <input type="checkbox" id="makeDefault"> Predeterminado
         </label>
 
-        <button type="submit" id="submitBtn">Agregar</button>
+        <button type="submit" id="submitBtn">Agregar ítem</button>
         <button type="button" id="cancelAdd" style="display:none;">Cancelar</button>
       </form>
     </details>
 
-    <!-- Rendered main list -->
+    <!-- Lista principal -->
     <div id="itemList"></div>
 
-    <!-- New filtered list at bottom -->
+    <!-- Filtro por pasillo -->
     <div id="filterList"></div>
   </div>
 
@@ -159,50 +151,50 @@
       { name:'guineos', quantity:10, category:'Produce', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
       { name:'uvas', quantity:1, category:'Produce', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
       { name:'limon', quantity:1, category:'Produce', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'yogurt griego', quantity:3, category:'Dairy', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'Pure de yuca', quantity:3, category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'sweet potato fries', quantity:1, category:'Frozen Foods', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'yogurt griego',quantity:3,category:'Dairy', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'Pure de yuca',quantity:3,category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'sweet potato fries',quantity:1,category:'Frozen Foods', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
       { name:'brocoli', quantity:1, category:'Produce', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
       { name:'lechuga', quantity:1, category:'Produce', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
       { name:'arroz', quantity:1, category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
       { name:'avena', quantity:1, category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
       { name:'granola', quantity:2, category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
       { name:'maiz', quantity:2, category:'Produce', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'mantequilla', quantity:2, category:'Dairy', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'habichuela', quantity:1, category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'mantequilla',quantity:2,category:'Dairy', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'habichuela',quantity:1,category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
       { name:'helado', quantity:1, category:'Frozen Foods', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'zumo limon', quantity:1, category:'Beverages', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'fresas congeladas', quantity:1, category:'Frozen Foods', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'zumo limon',quantity:1,category:'Beverages', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'fresas congeladas',quantity:1,category:'Frozen Foods', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
       { name:'jugo', quantity:1, category:'Beverages', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
       { name:'leche', quantity:3, category:'Dairy', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'popcorn', quantity:1, category:'Snacks & Treats', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'spray aceite', quantity:1, category:'Condiments & Oils', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'queso cheddar', quantity:1, category:'Dairy', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'mozzarella', quantity:1, category:'Dairy', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'popcorn',quantity:1,category:'Snacks & Treats', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'spray aceite',quantity:1,category:'Condiments & Oils', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'queso cheddar',quantity:1,category:'Dairy', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'mozzarella',quantity:1,category:'Dairy', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
       { name:'huevos', quantity:1, category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'toallitas humedas', quantity:2, category:'Household & Personal Care', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'prossicuto', quantity:1, category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'longas de pechuga de pollo', quantity:1, category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'pechugas de pollo', quantity:2, category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'carne de res', quantity:5, category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'pescado', quantity:1, category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'carne molida', quantity:2, category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'tocineta', quantity:1, category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'cocacola sin azucar', quantity:1, category:'Beverages', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'crema de leche', quantity:1, category:'Dairy', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'cereal', quantity:2, category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'pasta y salsa', quantity:1, category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'pancake', quantity:1, category:'Bakery', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'tuna', quantity:3, category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'aguacate', quantity:2, category:'Produce', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'honey', quantity:1, category:'Condiments & Oils', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'coffee', quantity:1, category:'Beverages', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'crema batida', quantity:1, category:'Dairy', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'chocolate chips', quantity:1, category:'Snacks & Treats', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'beef broth', quantity:1, category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'friendly benji treats', quantity:1, category:'Dog (Benji)', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'comida humeda', quantity:1, category:'Dog (Benji)', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
-      { name:'comida solida', quantity:1, category:'Dog (Benji)', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false }
+      { name:'toallitas humedas',quantity:2,category:'Household & Personal Care', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'prossicuto',quantity:1,category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'longas de pechuga de pollo',quantity:1,category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'pechugas de pollo',quantity:2,category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'carne de res',quantity:5,category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'pescado',quantity:1,category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'carne molida',quantity:2,category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'tocineta',quantity:1,category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'cocacola sin azucar',quantity:1,category:'Beverages', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'crema de leche',quantity:1,category:'Dairy', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'cereal',quantity:2,category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'pasta y salsa',quantity:1,category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'pancake',quantity:1,category:'Bakery', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'tuna',quantity:3,category:'Proteins', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'aguacate',quantity:2,category:'Produce', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'honey',quantity:1,category:'Condiments & Oils', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'coffee',quantity:1,category:'Beverages', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'crema batida',quantity:1,category:'Dairy', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'chocolate chips',quantity:1,category:'Snacks & Treats', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'beef broth',quantity:1,category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'friendly benji treats',quantity:1,category:'Dog (Benji)', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'comida humeda',quantity:1,category:'Dog (Benji)', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+      { name:'comida solida',quantity:1,category:'Dog (Benji)', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false }
     ];
 
     function getAll() {
@@ -213,7 +205,6 @@
       if (!data.defaultItems) data.defaultItems = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
       return data;
     }
-
     function saveAll(d){ localStorage.setItem(LS_KEY, JSON.stringify(d)); }
 
     function init(){
@@ -229,17 +220,17 @@
     }
 
     function bind(){
-      $('#createWeekBtn').onclick = createWeek;
-      $('#deleteWeekBtn').onclick = deleteWeek;
-      $('#weekSelect').onchange = switchWeek;
-      $('#toggleHidden').onchange = render;
-      $('#exportCsvBtn').onclick = exportCsv;
-      $('#itemForm').onsubmit = onAdd;
-      $('#cancelAdd').onclick = cancelAdd;
+      document.getElementById('createWeekBtn').onclick = createWeek;
+      document.getElementById('deleteWeekBtn').onclick = deleteWeek;
+      document.getElementById('weekSelect').onchange = switchWeek;
+      document.getElementById('toggleHidden').onchange = render;
+      document.getElementById('exportCsvBtn').onclick = exportCsv;
+      document.getElementById('itemForm').onsubmit = onAdd;
+      document.getElementById('cancelAdd').onclick = cancelAdd;
     }
 
     function populateWeeks(){
-      const sel = $('#weekSelect');
+      const sel = document.getElementById('weekSelect');
       sel.innerHTML='';
       Object.keys(getAll().lists).forEach(w=>{
         const o=new Option(w,w);
@@ -249,7 +240,7 @@
     }
 
     function createWeek(){
-      const name = $('#newWeekName').value.trim();
+      const name = document.getElementById('newWeekName').value.trim();
       if(!name) return alert('Escribe un nombre para la nueva lista.');
       const d = getAll();
       if(d.lists[name]) return alert('Ya existe una lista con ese nombre.');
@@ -273,40 +264,41 @@
 
     function switchWeek(){
       const d = getAll();
-      d.current = $('#weekSelect').value;
+      d.current = document.getElementById('weekSelect').value;
       saveAll(d);
       editingIndex = null;
       render();
     }
 
     function getItems(){ return getAll().lists[getAll().current] || []; }
-    function saveItems(it){ const d = getAll(); d.lists[d.current]=it; saveAll(d); }
+    function saveItems(it){ const d=getAll(); d.lists[d.current]=it; saveAll(d); }
 
     function onAdd(e){
       e.preventDefault();
       const d = getAll(), items = d.lists[d.current];
       const it = {
-        name:$('#name').value.trim(),
-        quantity:+$('#quantity').value,
-        category:$('#category').value,
-        aisle:$('#aisle').value.trim(),
-        price:parseFloat($('#price').value).toFixed(2),
-        frequency:$('#frequency').value.trim(),
-        notes:$('#notes').value.trim(),
+        name:document.getElementById('name').value.trim(),
+        quantity:+document.getElementById('quantity').value,
+        category:document.getElementById('category').value,
+        aisle:document.getElementById('aisle').value.trim(),
+        price:parseFloat(document.getElementById('price').value).toFixed(2),
+        frequency:document.getElementById('frequency').value.trim(),
+        notes:document.getElementById('notes').value.trim(),
         checked:false, hidden:false
       };
       items.push(it);
-      if($('#makeDefault').checked) d.defaultItems.push(it);
+      if(document.getElementById('makeDefault').checked) d.defaultItems.push(it);
       saveAll(d);
-      $('#itemForm').reset();
+      document.getElementById('itemForm').reset();
       render();
     }
 
     function render(){
-      const items = getItems(), showHidden = $('#toggleHidden').checked;
-      const listContainer = $('#itemList');
+      const items = getItems(), showHidden = document.getElementById('toggleHidden').checked;
+      const listContainer = document.getElementById('itemList');
       listContainer.innerHTML='';
 
+      // Main list by category
       categoryOrder.forEach(cat=>{
         const group = items.map((it,i)=>({it,i}))
           .filter(({it})=>it.category===cat && (!it.hidden||showHidden));
@@ -318,14 +310,42 @@
         summary.className='category-header'; summary.textContent=cat;
         details.append(summary);
 
-        const ul = document.createElement('ul');
-        group.forEach(({it:item, i:idx})=>{
-          if(editingIndex===idx){
-            ul.append(makeInlineForm(item,idx));
-          } else {
-            ul.append(makeListItem(item,idx));
-          }
+        const ul=document.createElement('ul');
+        group.forEach(({it:item,i:idx})=>{
+          const li=document.createElement('li');
+          if(item.checked) li.classList.add('checked');
+          if(item.hidden)  li.classList.add('showing-hidden');
+
+          const hdr=document.createElement('div'); hdr.className='item-header';
+          const chk=document.createElement('input');
+          chk.type='checkbox'; chk.className='item-checkbox'; chk.checked=item.checked;
+          chk.onclick=e=>{e.stopPropagation(); toggleChecked(idx);};
+
+          const title=document.createElement('h2');
+          title.textContent=`${item.name} (x${item.quantity})`;
+          title.onclick=()=>toggleChecked(idx);
+
+          const btns=document.createElement('div');
+          btns.append(
+            makeBtn('Editar','edit',()=>startEdit(idx)),
+            makeBtn(item.hidden?'Mostrar':'Ocultar', item.hidden?'show':'hide',()=>toggleHidden(idx)),
+            makeBtn('Eliminar','delete',()=>deleteItem(idx))
+          );
+
+          hdr.append(chk,title,btns);
+
+          const det=document.createElement('div'); det.className='item-details';
+          det.innerHTML=`
+            <strong>Pasillo:</strong> ${item.aisle||'-'}<br>
+            <strong>Precio:</strong> $${item.price}<br>
+            <strong>Frecuencia:</strong> ${item.frequency||'-'}<br>
+            <strong>Notas:</strong> ${item.notes||'-'}
+          `;
+
+          li.append(hdr,det);
+          ul.append(li);
         });
+
         details.append(ul);
         listContainer.append(details);
       });
@@ -333,131 +353,43 @@
       renderFilter();
     }
 
-    function makeListItem(item,idx){
-      const li=document.createElement('li');
-      if(item.checked) li.classList.add('checked');
-      if(item.hidden)  li.classList.add('showing-hidden');
-
-      const hdr=document.createElement('div'); hdr.className='item-header';
-      const chk=document.createElement('input');
-      chk.type='checkbox'; chk.className='item-checkbox'; chk.checked=item.checked;
-      chk.onclick=e=>{e.stopPropagation(); toggleChecked(idx);};
-
-      const title=document.createElement('h2');
-      title.textContent=`${item.name} (x${item.quantity})`;
-      title.onclick=()=>toggleChecked(idx);
-
-      const btns=document.createElement('div');
-      btns.append(
-        makeBtn('Editar','edit',()=>startInline(idx)),
-        makeBtn(item.hidden?'Mostrar':'Ocultar',item.hidden?'show':'hide',()=>toggleHidden(idx)),
-        makeBtn('Eliminar','delete',()=>deleteItem(idx))
-      );
-
-      hdr.append(chk,title,btns);
-
-      const det=document.createElement('div'); det.className='item-details';
-      det.innerHTML=`
-        <strong>Pasillo:</strong> ${item.aisle||'-'}<br>
-        <strong>Precio:</strong> $${item.price}<br>
-        <strong>Frecuencia:</strong> ${item.frequency||'-'}<br>
-        <strong>Notas:</strong> ${item.notes||'-'}
-      `;
-
-      li.append(hdr,det);
-      return li;
-    }
-
-    function makeInlineForm(item,idx){
-      const form=document.createElement('form'); form.className='inline-form';
-      const fields = [];
-
-      // name
-      const nameInput = document.createElement('input');
-      nameInput.type='text'; nameInput.value=item.name; nameInput.required=true;
-      fields.push(nameInput);
-
-      // quantity
-      const qtyInput = document.createElement('input');
-      qtyInput.type='number'; qtyInput.value=item.quantity; qtyInput.min=1;
-      qtyInput.required=true; qtyInput.className='half';
-      fields.push(qtyInput);
-
-      // category
-      const catSelect = document.createElement('select');
-      catSelect.className='half'; catSelect.required=true;
-      categoryOrder.forEach(c=>{
-        const o=new Option(c,c);
-        if(c===item.category) o.selected=true;
-        catSelect.append(o);
-      });
-      fields.push(catSelect);
-
-      // aisle
-      const aisleInput = document.createElement('input');
-      aisleInput.type='text'; aisleInput.value=item.aisle; aisleInput.placeholder='Pasillo';
-      aisleInput.className='half';
-      fields.push(aisleInput);
-
-      // price
-      const priceInput = document.createElement('input');
-      priceInput.type='number'; priceInput.value=item.price;
-      priceInput.step='0.01'; priceInput.required=true; priceInput.className='half';
-      fields.push(priceInput);
-
-      // frequency
-      const freqInput = document.createElement('input');
-      freqInput.type='text'; freqInput.value=item.frequency;
-      freqInput.className='half'; freqInput.required=true;
-      fields.push(freqInput);
-
-      // notes
-      const notesInput = document.createElement('textarea');
-      notesInput.value=item.notes;
-      fields.push(notesInput);
-
-      // append fields
-      fields.forEach(f=>form.append(f));
-
-      // buttons
-      const saveBtn=document.createElement('button');
-      saveBtn.textContent='Guardar'; saveBtn.type='submit';
-      const cancelBtn=document.createElement('button');
-      cancelBtn.textContent='Cancelar'; cancelBtn.type='button';
-      form.append(saveBtn,cancelBtn);
-
-      form.onsubmit=e=>{
-        e.preventDefault();
-        const updated = {
-          name: nameInput.value.trim(),
-          quantity: +qtyInput.value,
-          category: catSelect.value,
-          aisle: aisleInput.value.trim(),
-          price: parseFloat(priceInput.value).toFixed(2),
-          frequency: freqInput.value.trim(),
-          notes: notesInput.value.trim(),
-          checked: item.checked,
-          hidden: item.hidden
-        };
-        const items = getItems();
-        items[idx] = updated;
-        saveItems(items);
-        editingIndex = null;
-        render();
-      };
-      cancelBtn.onclick=e=>{
-        e.preventDefault();
-        editingIndex = null;
-        render();
-      };
-
-      return form;
-    }
-
-    function startInline(i){
+    function startEdit(i){
+      const items = getItems(), it = items[i];
       editingIndex = i;
-      render();
+      // populate form
+      document.getElementById('name').value = it.name;
+      document.getElementById('quantity').value = it.quantity;
+      document.getElementById('category').value = it.category;
+      document.getElementById('aisle').value = it.aisle;
+      document.getElementById('price').value = it.price;
+      document.getElementById('frequency').value = it.frequency;
+      document.getElementById('notes').value = it.notes;
+      document.getElementById('makeDefault').checked = false;
+      document.getElementById('submitBtn').textContent = 'Guardar cambios';
+      document.getElementById('cancelAdd').style.display = 'inline-block';
+      document.getElementById('addItemSection').open = true;
+
+      // override onAdd to handle edit
+      document.getElementById('itemForm').onsubmit = function(e){
+        e.preventDefault();
+        const items = getItems();
+        items[i] = {
+          name:document.getElementById('name').value.trim(),
+          quantity:+document.getElementById('quantity').value,
+          category:document.getElementById('category').value,
+          aisle:document.getElementById('aisle').value.trim(),
+          price:parseFloat(document.getElementById('price').value).toFixed(2),
+          frequency:document.getElementById('frequency').value.trim(),
+          notes:document.getElementById('notes').value.trim(),
+          checked: it.checked,
+          hidden: it.hidden
+        };
+        saveItems(items);
+        resetAddForm();
+        render();
+      };
     }
+
     function deleteItem(i){
       const items = getItems();
       items.splice(i,1);
@@ -477,8 +409,15 @@
       render();
     }
     function cancelAdd(){
-      $('#itemForm').reset();
-      $('#cancelAdd').style.display='none';
+      resetAddForm();
+      render();
+    }
+    function resetAddForm(){
+      editingIndex = null;
+      document.getElementById('itemForm').reset();
+      document.getElementById('submitBtn').textContent = 'Agregar ítem';
+      document.getElementById('cancelAdd').style.display = 'none';
+      document.getElementById('itemForm').onsubmit = onAdd;
     }
 
     function renderFilter(){
@@ -486,11 +425,12 @@
       const withA = items.filter(i=>i.aisle);
       const withoutA = items.filter(i=>!i.aisle);
       const byA = {}, byC = {};
-      withA.forEach(i=>(byA[i.aisle]=byA[i.aisle]||[]).push(i));
-      withoutA.forEach(i=>(byC[i.category]=byC[i.category]||[]).push(i));
 
-      const ctn = $('#filterList');
-      ctn.innerHTML='<h2>Filtro: Pasillo y Categoría</h2>';
+      withA.forEach(i => (byA[i.aisle] = byA[i.aisle]||[]).push(i));
+      withoutA.forEach(i => (byC[i.category] = byC[i.category]||[]).push(i));
+
+      const ctn = document.getElementById('filterList');
+      ctn.innerHTML = '<h2>Filtro: Pasillo y Categoría</h2>';
 
       Object.keys(byA).sort((a,b)=>{
         const na=parseFloat(a), nb=parseFloat(b);
@@ -498,40 +438,38 @@
       }).forEach(a=>{
         const h3 = document.createElement('h3');
         h3.textContent = `Pasillo ${a}`;
-        ctn.append(h3);
         const ul = document.createElement('ul');
         byA[a].forEach(it=>{
           const li = document.createElement('li');
           li.textContent = `${it.name} (x${it.quantity})`;
           ul.append(li);
         });
-        ctn.append(ul);
+        ctn.append(h3,ul);
       });
 
       categoryOrder.forEach(cat=>{
         if(!byC[cat]) return;
         const h3 = document.createElement('h3');
         h3.textContent = cat;
-        ctn.append(h3);
         const ul = document.createElement('ul');
         byC[cat].forEach(it=>{
           const li = document.createElement('li');
           li.textContent = `${it.name} (x${it.quantity})`;
           ul.append(li);
         });
-        ctn.append(ul);
+        ctn.append(h3,ul);
       });
     }
 
     function exportCsv(){
       const items = getItems();
       const hdr = ['Nombre','Cantidad','Categoría','Pasillo','Precio','Frecuencia','Notas','Marcado','Oculto'];
-      let csv = hdr.join(',')+'\n';
+      let csv = hdr.join(',') + '\n';
       items.forEach(i=>{
         csv += [
           i.name,i.quantity,i.category,i.aisle,
           i.price,i.frequency,i.notes,i.checked,i.hidden
-        ].map(f=>`"${f}"`).join(',')+'\n';
+        ].map(f=>`"${f}"`).join(',') + '\n';
       });
       const blob = new Blob([csv],{type:'text/csv'});
       const url = URL.createObjectURL(blob);
@@ -539,9 +477,6 @@
       a.href = url; a.download = `lista_${getAll().current}.csv`;
       a.click(); URL.revokeObjectURL(url);
     }
-
-    function createSelector(q){ return document.querySelector(q); }
-    const $ = createSelector;
 
     document.addEventListener('DOMContentLoaded', init);
   </script>
