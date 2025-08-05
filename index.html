@@ -86,19 +86,60 @@
     const LS_KEY = 'shoppingLists';
     let editingIndex = null;
     const categoryOrder = ['Produce','Proteins','Dairy','Pantry & Carbs','Frozen Foods','Beverages','Snacks & Treats','Condiments & Oils','Bakery','Household & Personal Care','Dog (Benji)'];
-    const DEFAULT_ITEMS = [
-      { name:'moras',quantity:1,category:'Produce',aisle:'',price:'0.00',frequency:'',notes:'',checked:false,hidden:false },
-      { name:'fresas',quantity:1,category:'Produce',aisle:'',price:'0.00',frequency:'',notes:'',checked:false,hidden:false },
-      { name:'guineos',quantity:10,category:'Produce',aisle:'',price:'0.00',frequency:'',notes:'',checked:false,hidden:false },
-      { name:'uvas',quantity:1,category:'Produce',aisle:'',price:'0.00',frequency:'',notes:'',checked:false,hidden:false },
-      { name:'limon',quantity:1,category:'Produce',aisle:'',price:'0.00',frequency:'',notes:'',checked:false,hidden:false },
-      { name:'yogurt griego',quantity:3,category:'Dairy',aisle:'',price:'0.00',frequency:'',notes:'',checked:false,hidden:false },
-      { name:'Pure de yuca',quantity:3,category:'Pantry & Carbs',aisle:'',price:'0.00',frequency:'',notes:'',checked:false,hidden:false },
-      { name:'sweet potato fries',quantity:1,category:'Frozen Foods',aisle:'',price:'0.00',frequency:'',notes:'',checked:false,hidden:false },
-      { name:'brocoli',quantity:1,category:'Produce',aisle:'',price:'0.00',frequency:'',notes:'',checked:false,hidden:false },
-      { name:'lechuga',quantity:1,category:'Produce',aisle:'',price:'0.00',frequency:'',notes:'',checked:false,hidden:false },
-      { name:'arroz',quantity:1,category:'Pantry & Carbs',aisle:'',price:'0.00',frequency:'',notes:'',checked:false,hidden:false }
-    ];
+const DEFAULT_ITEMS = [
+  { name:'moras',                quantity:1, category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'fresas',               quantity:1, category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'guineos',              quantity:10,category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'uvas',                 quantity:1, category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'limon',                quantity:1, category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'yogurt griego',        quantity:3, category:'Dairy',          aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'Pure de yuca',         quantity:3, category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'sweet potato fries',   quantity:1, category:'Frozen Foods',   aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'brocoli',              quantity:1, category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'lechuga',              quantity:1, category:'Produce',        aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'arroz',                quantity:1, category:'Pantry & Carbs', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+
+  // ———————————— New Items ————————————
+  { name:'avena',                quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'granola',              quantity:2, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'maiz',                 quantity:2, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'mantequilla',          quantity:2, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'habichuela',           quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'helado',               quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'zumo limon',           quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'fresas congeladas',    quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'jugo',                 quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'leche',                quantity:3, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'popcorn',              quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'spray aceite',         quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'queso cheddar',        quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'mozzarella',           quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'huevos',               quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'toallitas humedas',    quantity:2, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'prossicuto',           quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'longas de pechuga de pollo', quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'pechugas de pollo',    quantity:2, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'carne de res',         quantity:5, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'pescado',              quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'carne molida',         quantity:2, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'tocineta',             quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'cocacola sin azucar',  quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'crema de leche',       quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'cereal',               quantity:2, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'pasta y salsa',        quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'pancake',              quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'tuna',                 quantity:3, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'aguacate',             quantity:2, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'honey',                quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'coffee',               quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'crema batida',         quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'chocolate chips',      quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'beef broth',           quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'friendly benji treats',quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'comida humeda',        quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false },
+  { name:'comida solida',        quantity:1, category:'', aisle:'', price:'0.00', frequency:'', notes:'', checked:false, hidden:false }
+];
+
 
     function getAll() {
       return JSON.parse(localStorage.getItem(LS_KEY)) || { current:'', lists:{} };
@@ -321,3 +362,4 @@
   </script>
 </body>
 </html>
+
